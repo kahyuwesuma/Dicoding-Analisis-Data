@@ -44,21 +44,11 @@ def display_holiday_workday_analysis(df):
     holiday_data = df[df['holiday'] == 1]['cnt']
     workday_data = df[df['holiday'] == 0]['cnt']
 
-    st.subheader('Hari Libur')
-    st.write("Distribusi penjualan pada hari libur:")
-    fig, ax = plt.subplots()
-    sns.histplot(holiday_data, bins=20, kde=True, color='skyblue', ax=ax)
-    ax.set_xlabel('Jumlah Penjualan')
-    ax.set_ylabel('Frekuensi')
-    st.pyplot(fig)
-
-    st.subheader('Hari Kerja')
-    st.write("Distribusi penjualan pada hari kerja:")
-    fig, ax = plt.subplots()
-    sns.histplot(workday_data, bins=20, kde=True, color='lightgreen', ax=ax)
-    ax.set_xlabel('Jumlah Penjualan')
-    ax.set_ylabel('Frekuensi')
-    st.pyplot(fig)
+    fig = px.histogram(df, x='cnt', color='holiday', nbins=20, histnorm='probability density', 
+                       title='Distribusi Penjualan Hari Libur vs Hari Kerja', 
+                       labels={'cnt': 'Jumlah Penjualan', 'holiday': 'Hari Libur'})
+    fig.update_layout(barmode='overlay')
+    st.plotly_chart(fig)
     
 def display_weather_analysis(df):
     st.header('Hubungan antara Kondisi Cuaca dan Jumlah Penjualan')
