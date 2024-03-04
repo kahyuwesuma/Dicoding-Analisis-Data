@@ -25,7 +25,7 @@ def display_season_analysis(df):
         st.subheader(season_name)
         st.line_chart(season_data.set_index('dteday')['cnt'])
 
-    st.header('Pola Penjualan Berdasarkan Musim')
+    st.header('Distribusi Penjualan Berdasarkan Musim')
 
     season_names = {1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'}
 
@@ -41,14 +41,11 @@ def display_season_analysis(df):
 def display_holiday_workday_analysis(df):
     st.header('Distribusi Penjualan pada Hari Libur dan Hari Kerja')
 
-    # Memisahkan data berdasarkan jenis hari: libur (holiday) dan hari kerja (workingday)
     sales_by_day_type = df.groupby(['holiday', 'workingday'])['cnt'].sum().reset_index()
 
-    # Mengganti nilai 0 dan 1 pada kolom holiday dan workingday dengan label yang lebih deskriptif
     sales_by_day_type['holiday'] = sales_by_day_type['holiday'].map({0: 'Non-Holiday', 1: 'Holiday'})
     sales_by_day_type['workingday'] = sales_by_day_type['workingday'].map({0: 'Non-Working Day', 1: 'Working Day'})
 
-    # Membuat visualisasi menggunakan Plotly Express
     fig = px.bar(sales_by_day_type, x='holiday', y='cnt', color='workingday', barmode='group',
                  title='Distribusi Penjualan pada Hari Libur dan Hari Kerja',
                  labels={'holiday': 'Jenis Hari', 'cnt': 'Jumlah Penjualan', 'workingday': 'Status Hari'})
