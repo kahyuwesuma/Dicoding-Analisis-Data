@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
+import plotly.graph_objects as go
 
 URL_DATASET = 'https://raw.githubusercontent.com/kahyuwesuma/dicoding-dataset/main/day.csv'
 df = pd.read_csv(URL_DATASET)
@@ -37,19 +38,21 @@ def display_season_analysis(df):
     fig.update_yaxes(title='Total Penjualan')
     st.plotly_chart(fig)
 
-
 def display_holiday_workday_analysis(df):
-    st.header('Distribusi Penjualan Hari Libur vs Hari Kerja')
+    st.header('Distribusi Penjualan pada Hari Libur dan Hari Kerja')
 
-    holiday_data = df[df['holiday'] == 1]['cnt']
-    workday_data = df[df['holiday'] == 0]['cnt']
+    # Memisahkan data berdasarkan jenis hari: libur (holiday) dan hari kerja (workingday)
+    sales_by_day_type = df.groupby(['holiday', 'workingday'])['cnt'].sum().reset_index()
 
-    fig = px.histogram(df, x='cnt', color='holiday', nbins=20, histnorm='probability density', 
-                       title='Distribusi Penjualan Hari Libur vs Hari Kerja', 
-                       labels={'cnt': 'Jumlah Penjualan', 'holiday': 'Hari Libur'})
+    # Mengganti nilai 0 dan 1 pada kolom holiday dan workingday dengan label yang lebih deskriptif
+    sales_by_day_type['holiday'] = sales_by_day_type['holiday'].map({0: 'Non-Holiday', 1: 'Holiday'})
+    sales_by_day_type['workingday'] = sales_by_day_type['workingday'].map({0: 'Non-Working Day', 1: 'Working Day'})
 
-    fig.update_traces(name=['Hari Libur', 'Hari Kerja'])  # Menambahkan label yang jelas pada legend
-    fig.update_layout(barmode='overlay')
+    # Membuat visualisasi menggunakan Plotly Express
+    fig = px.bar(sales_by_day_type, x='holiday', y='cnt', color='workingday', barmode='group',
+                 title='Distribusi Penjualan pada Hari Libur dan Hari Kerja',
+                 labels={'holiday': 'Jenis Hari', 'cnt': 'Jumlah Penjualan', 'workingday': 'Status Hari'})
+
     st.plotly_chart(fig)
     
 def display_weather_analysis(df):
