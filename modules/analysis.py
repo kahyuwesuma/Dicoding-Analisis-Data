@@ -47,6 +47,8 @@ def display_holiday_workday_analysis(df):
     fig = px.histogram(df, x='cnt', color='holiday', nbins=20, histnorm='probability density', 
                        title='Distribusi Penjualan Hari Libur vs Hari Kerja', 
                        labels={'cnt': 'Jumlah Penjualan', 'holiday': 'Hari Libur'})
+
+    fig.update_traces(name=['Hari Libur', 'Hari Kerja'])  # Menambahkan label yang jelas pada legend
     fig.update_layout(barmode='overlay')
     st.plotly_chart(fig)
     
